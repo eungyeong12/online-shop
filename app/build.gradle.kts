@@ -41,14 +41,6 @@ android {
         // Jetpack Compose 컴파일러 확장 버전을 설정
         kotlinCompilerExtensionVersion = "1.5.1" // 1.5.1 버전은 kotlin 1.9.20과 호환
     }
-    packaging {
-        resources {
-            // 여러 라이브러리를 추가하면 중복된 라이선스 파일이 포함될 수 있음
-            // gradle이 이를 감지하고 빌드 오류를 발생시킴
-            // 이를 방지하기 위해 excludes를 사용하여 필요없는 파일을 제외
-            excludes += "/META-INF/{AL2.0, LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
