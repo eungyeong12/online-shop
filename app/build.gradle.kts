@@ -39,7 +39,7 @@ android {
     }
     composeOptions {
         // Jetpack Compose 컴파일러 확장 버전을 설정
-        kotlinCompilerExtensionVersion = "1.5.1" // 1.5.1 버전은 kotlin 1.9.20과 호환
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
 
@@ -79,4 +79,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:1.7.5")
     // Google Material Design 컴포넌트 제공
     implementation("com.google.android.material:material:1.12.0")
+    // Jetpack Compose를 Activity에서 사용할 수 있도록 함
+    implementation("androidx.activity:activity-compose:1.9.2")
 }
