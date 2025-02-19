@@ -72,7 +72,8 @@ dependencies {
     // JSON 데이터를 Kotlin 객체로 변환하거나, 반대로 객체를 JSON으로 변환
     implementation("com.google.code.gson:gson:2.9.1")
     // Jetpack Compose에서 ConstraintLayout을 사용할 수 있도록 지원
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0-beta01")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-beta01")
     // Jetpack Compose에서 기본 UI 요소를 포함한 Foundation 레벨의 API 제공
     implementation("androidx.compose.foundation:foundation:1.5.0")
     // Jetpack Compose UI 디버깅 및 프리뷰 기능 제공

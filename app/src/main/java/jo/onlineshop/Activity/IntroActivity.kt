@@ -1,4 +1,4 @@
-package jo.onlineshop
+package jo.onlineshop.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import jo.onlineshop.R
 
 class IntroActivity : BaseActivity() { // BaseActivity를 상속받음
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +40,7 @@ class IntroActivity : BaseActivity() { // BaseActivity를 상속받음
 // ={}: 기본값으로 빈 함수를 설정
 fun IntroScreen(onClick:()->Unit={}) {
     Image( // 배경
-        painter = painterResource(id=R.drawable.background),
+        painter = painterResource(id= R.drawable.background),
         contentDescription = null,
         modifier = Modifier.background(Color.White)
             .fillMaxSize(),
@@ -53,7 +54,7 @@ fun IntroScreen(onClick:()->Unit={}) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id=R.drawable.fashion),
+            painter = painterResource(id= R.drawable.fashion),
             contentDescription = null,
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -61,7 +62,7 @@ fun IntroScreen(onClick:()->Unit={}) {
             contentScale = ContentScale.Fit // 원본 비율 유지, 이미지가 잘리지 않게 표시
         )
         Image(
-            painter = painterResource(id=R.drawable.title),
+            painter = painterResource(id= R.drawable.title),
             contentDescription = null,
             modifier = Modifier
                 .padding(16.dp)
@@ -69,7 +70,7 @@ fun IntroScreen(onClick:()->Unit={}) {
             contentScale = ContentScale.Fit
         )
         Image(
-            painter = painterResource(id=R.drawable.go),
+            painter = painterResource(id= R.drawable.go),
             contentDescription = null,
             modifier = Modifier
                 .padding(top = 8.dp)
