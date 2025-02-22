@@ -1,14 +1,18 @@
 package jo.onlineshop.Activity
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -51,6 +57,7 @@ import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import jo.onlineshop.Model.CategoryModel
 import jo.onlineshop.Model.SliderModel
 import jo.onlineshop.R
 import jo.onlineshop.ViewModel.MainViewModel
@@ -71,16 +78,30 @@ fun MainActivityScreen() {
     val viewModel = MainViewModel()
     // banners 리스트 생성
     val banners = remember { mutableStateListOf<SliderModel>() }
+    // categories 리스트 생성
+    val categories = remember { mutableStateListOf<CategoryModel>() }
 
     // 로딩 상태 관리
     var showBannerLoading by remember { mutableStateOf(true) }
+    var showCategoryLoading by remember { mutableStateOf(true) }
+
     // Composable이 최초로 실행될 때 한 번만 실행됨
+    // banner
     LaunchedEffect(Unit) {
-        viewModel.loadBanner().observeForever { //  Firebase에서 데이터를 가져오며 데이터 변화를 감지
+        viewModel.loadBanner().observeForever { // Firebase에서 데이터를 가져오며 데이터 변화를 감지
             // 데이터가 변경되면
             banners.clear() // 기존 데이터 삭제
             banners.addAll(it) // 새로운 데이터 추가
             showBannerLoading = false // 로딩 완료
+        }
+    }
+
+    // category
+    LaunchedEffect(Unit) {
+        viewModel.loadCategory().observeForever {
+            categories.clear()
+            categories.addAll(it)
+            showCategoryLoading = false
         }
     }
 
@@ -143,7 +164,118 @@ fun MainActivityScreen() {
                     Banners(banners) // 배너 표시
                 }
             }
+
+            item {
+                Text(
+                    text = "Official Brand",
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                        .padding(horizontal = 16.dp)
+                )
+            }
+
+            item {
+                if (showCategoryLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator() // 로딩 인디케이터 표시
+                    }
+                } else {
+                    CategoryList(categories)
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun CategoryList(categories: SnapshotStateList<CategoryModel>) { // 상태 관리가 가능한 List
+    // 선택된 카테고리의 인덱스를 저장하는 변수
+    var selectedIndex by remember { mutableStateOf(-1) }
+    val context = LocalContext.current
+
+    // 가로 스크롤 리스트
+    LazyRow (
+        modifier = Modifier
+            .fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(24.dp), // 아이템 간 간격 24dp
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp) // 리스트의 내부 여백
+    ) {
+        // 카테고리 리스트의 개수를 기반으로 아이템을 생성
+        items(categories.size) { index ->
+            CategoryItem(item = categories[index], isSelected = selectedIndex == index,
+                onItemClick = {
+                    selectedIndex = index
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        // 클릭 후 500ms 지연
+                    }, 500)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun CategoryItem(item: CategoryModel, isSelected: Boolean, onItemClick:()->Unit) {
+    Column (
+        modifier = Modifier
+            .clickable (onClick = onItemClick), // 클릭 시 onItemClick 이벤트가 실행됨
+        horizontalAlignment = Alignment.CenterHorizontally // 수평 중앙 정렬
+    ) {
+        // 비동기 이미지 로딩
+        AsyncImage(
+            model = (item.picUrl), // 이미지의 URL을 전달
+            contentDescription = item.title,
+            modifier = Modifier
+                .size(if(isSelected) 60.dp else 50.dp)
+                .background(
+                    color = if(isSelected) colorResource(R.color.darkBrown) else colorResource(R.color.lightBrown),
+                    shape = RoundedCornerShape(100.dp)
+                ),
+            contentScale = ContentScale.Inside, // 이미지를 컨테이너 내부에 맞춰 표시
+            // 이미지에 색상 필터 효과 추가
+            colorFilter = if(isSelected) {
+                ColorFilter.tint(Color.White) // 이미지를 흰색으로 덮어씌움
+            } else {
+                ColorFilter.tint(Color.Black) // 이미지를 검은색으로 덮어씌움
+            }
+        )
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+        Text(
+            text = item.title,
+            color = colorResource(R.color.darkBrown),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun SectionTitle(title: String, actionText: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp)
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            color = Color.Black,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = actionText,
+            color = colorResource(R.color.darkBrown)
+        )
     }
 }
 
