@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +59,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import jo.onlineshop.Model.CategoryModel
+import jo.onlineshop.Model.ItemsModel
+import jo.onlineshop.Model.ListItems
 import jo.onlineshop.Model.SliderModel
 import jo.onlineshop.R
 import jo.onlineshop.ViewModel.MainViewModel
@@ -80,10 +83,13 @@ fun MainActivityScreen() {
     val banners = remember { mutableStateListOf<SliderModel>() }
     // categories 리스트 생성
     val categories = remember { mutableStateListOf<CategoryModel>() }
+    // 인기 상품 리스트 생성
+    val Popular = remember { mutableStateListOf<ItemsModel>() }
 
     // 로딩 상태 관리
     var showBannerLoading by remember { mutableStateOf(true) }
     var showCategoryLoading by remember { mutableStateOf(true) }
+    var showPopularLoading by remember { mutableStateOf(true) }
 
     // Composable이 최초로 실행될 때 한 번만 실행됨
     // banner
@@ -102,6 +108,15 @@ fun MainActivityScreen() {
             categories.clear()
             categories.addAll(it)
             showCategoryLoading = false
+        }
+    }
+
+    // Popular
+    LaunchedEffect(Unit) {
+        viewModel.loadPopular().observeForever {
+            Popular.clear()
+            Popular.addAll(it)
+            showPopularLoading = false
         }
     }
 
@@ -177,7 +192,6 @@ fun MainActivityScreen() {
                         .padding(horizontal = 16.dp)
                 )
             }
-
             item {
                 if (showCategoryLoading) {
                     Box(
@@ -190,6 +204,24 @@ fun MainActivityScreen() {
                     }
                 } else {
                     CategoryList(categories)
+                }
+            }
+
+            item {
+                SectionTitle("Most Popular", "See All")
+            }
+            item {
+                if (showPopularLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    ListItems(Popular)
                 }
             }
         }
