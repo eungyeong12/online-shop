@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -70,14 +72,15 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainActivityScreen()
+            MainActivityScreen {
+
+            }
         }
     }
 }
 
 @Composable
-@Preview
-fun MainActivityScreen() {
+fun MainActivityScreen(onCartClick: () -> Unit) {
     val viewModel = MainViewModel()
     // banners 리스트 생성
     val banners = remember { mutableStateListOf<SliderModel>() }
@@ -225,6 +228,15 @@ fun MainActivityScreen() {
                 }
             }
         }
+
+        BottomMenu(
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(bottomMenu) { // ConstraintLayout 내에서 제약 조건을 설정
+                    bottom.linkTo(parent.bottom) // 부모의 하단에 메뉴를 고정
+                },
+            onItemClick = onCartClick // 메뉴 아이템 클릭 시 실행할 함수 전달
+        )
     }
 }
 
@@ -397,4 +409,40 @@ fun IndicatorDot(
             .clip(CircleShape) // 도트를 원형으로 변경
             .background(color)
     )
+}
+
+@Composable
+fun BottomMenu(modifier: Modifier, onItemClick: () -> Unit) {
+    Row (
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 48.dp)
+            .background(
+                colorResource(R.color.darkBrown),
+                shape = RoundedCornerShape(10.dp)
+            ),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        BottomMenuItem(icon = painterResource(R.drawable.btn_1), text = "Explorer")
+        BottomMenuItem(icon = painterResource(R.drawable.btn_2), text = "Cart", onItemClick = onItemClick)
+        BottomMenuItem(icon = painterResource(R.drawable.btn_3), text = "Favorite")
+        BottomMenuItem(icon = painterResource(R.drawable.btn_4), text = "Orders")
+        BottomMenuItem(icon = painterResource(R.drawable.btn_5), text = "Profile")
+    }
+}
+
+@Composable
+// 하단 네비게이션 메뉴의 개별 아이템
+fun BottomMenuItem(icon: Painter, text:String, onItemClick: (() -> Unit) ?= null) {
+    Column (modifier = Modifier
+        .height(70.dp)
+        .clickable { onItemClick?.invoke() } // 클릭 시 onItemClick 콜백을 실행 (null이면 실행 안 됨)
+        // invoke()는 함수 타입의 객체를 호출할 때 사용
+        .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally, // 아이콘과 텍스트를 수평 중앙 정렬
+        verticalArrangement = Arrangement.Center // 아이콘과 텍스트를 수직 중앙 정렬
+    ) {
+        Icon(icon, contentDescription = text, tint = Color.White)
+        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        Text(text, color = Color.White, fontSize = 10.sp)
+    }
 }
