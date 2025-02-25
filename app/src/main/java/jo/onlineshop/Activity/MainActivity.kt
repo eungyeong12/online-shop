@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
         enableEdgeToEdge()
         setContent {
             MainActivityScreen {
-
+                startActivity(Intent(this, CartActivity::class.java))
             }
         }
     }

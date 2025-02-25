@@ -1,5 +1,6 @@
 package jo.onlineshop.Activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -65,7 +66,7 @@ class DetailActivity : BaseActivity() {
                     managmentCart.insertItem(item) // 장바구니에 아이템 추가
                 },
                 onCartClick = {
-
+                    startActivity(Intent(this, CartActivity::class.java))
                 }
             )
         }
