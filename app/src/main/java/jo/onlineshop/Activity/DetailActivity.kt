@@ -235,16 +235,20 @@ class DetailActivity : BaseActivity() {
         LazyRow ( // 가로 스크롤
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
         ) {
+            // itemsIndexed: LazyColumn, LazyRow 등과 함께 사용되는 함수로, 리스트의 항목과 함께 해당 항목의 인덱스를 제공하는 역할
             itemsIndexed(models) {
                 index, model ->
                 Box(modifier = Modifier
                     .padding(end = 16.dp)
                     .height(40.dp)
+                    // 하나의 Modifier에 추가적인 Modifier를 결합할 때 사용
                     .then(
+                        // index와 selectedModelIndex가 같으면 진한 갈색 테두리를 추가하고,
                         if (index == selectedModelIndex) {
                             Modifier.border(1.dp, colorResource(R.color.darkBrown)
                                 , RoundedCornerShape(10.dp)
                             )
+                        // 다르면 동일한 테두리를 추가
                         } else {
                             Modifier.border(1.dp, colorResource(R.color.darkBrown)
                                 , RoundedCornerShape(10.dp)
