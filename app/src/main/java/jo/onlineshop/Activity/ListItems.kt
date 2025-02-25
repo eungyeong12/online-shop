@@ -1,5 +1,6 @@
 package jo.onlineshop.Activity
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import jo.onlineshop.Model.ItemsModel
 import jo.onlineshop.R
@@ -56,7 +58,10 @@ fun PopularItem(items: List<ItemsModel>, pos: Int) {
                 ) // 이미지의 모서리를 둥글게 처리
                 .height(195.dp)
                 .clickable {
-
+                    val intent = Intent(context, DetailActivity::class.java).apply {
+                        putExtra("object", items[pos])
+                    }
+                    startActivity(context, intent, null)
                 }, contentScale = ContentScale.Crop // 이미지가 컨테이너를 꽉 채우도록 설정
         )
         Text(

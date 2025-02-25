@@ -79,7 +79,7 @@ dependencies {
     // Jetpack Compose UI 디버깅 및 프리뷰 기능 제공
     implementation("androidx.compose.ui:ui-tooling:1.7.5")
     // Google Material Design 컴포넌트 제공
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.compose.material3:material3:1.3.1")
     // Jetpack Compose를 Activity에서 사용할 수 있도록 함
     implementation("androidx.activity:activity-compose:1.9.2")
 }
