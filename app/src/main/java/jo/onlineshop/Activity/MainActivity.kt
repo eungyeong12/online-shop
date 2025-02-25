@@ -1,5 +1,6 @@
 package jo.onlineshop.Activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -28,7 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +41,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
@@ -50,11 +49,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -62,7 +61,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import jo.onlineshop.Model.CategoryModel
 import jo.onlineshop.Model.ItemsModel
-import jo.onlineshop.Model.ListItems
 import jo.onlineshop.Model.SliderModel
 import jo.onlineshop.R
 import jo.onlineshop.ViewModel.MainViewModel
@@ -258,7 +256,11 @@ fun CategoryList(categories: SnapshotStateList<CategoryModel>) { // 상태 관�
                 onItemClick = {
                     selectedIndex = index
                     Handler(Looper.getMainLooper()).postDelayed({
-                        // 클릭 후 500ms 지연
+                        val intent = Intent(context, ListItemsActivity::class.java).apply {
+                            putExtra("id", categories[index].id.toString())
+                            putExtra("title", categories[index].title)
+                        }
+                        startActivity(context, intent, null)
                     }, 500)
                 }
             )

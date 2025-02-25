@@ -73,7 +73,32 @@ class MainRepository {
         val query: Query = ref.orderByChild("showRecommended").equalTo(true)
         // 한 번만 데이터를 가져오고 리스너 종료, 실시간 변경 감지 X
         query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) { // snapshot: Firebase에서 가져온 Items 데이터 목롥
+            override fun onDataChange(snapshot: DataSnapshot) { // snapshot: Firebase에서 가져온 Items 데이터 목록
+                val lists = mutableListOf<ItemsModel>()
+                for (childSnapshot in snapshot.children) {
+                    val list = childSnapshot.getValue(ItemsModel::class.java)  // 데이터를 ItemsModel 객체로 변환
+                    if (list != null) {
+                        lists.add(list)
+                    }
+                }
+                listData.value = lists // LiveData에 불러온 데이터 전달
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+        return listData
+    }
+
+    fun loadFiltered(id: String): LiveData<MutableList<ItemsModel>> { // 데이터 변경 시 자동으로 UI에 반영
+        val listData = MutableLiveData<MutableList<ItemsModel>>() // Firebase에서 가져온 데이터를 저장
+        val ref = firebaseDatabase.getReference("Items")
+        // categoryId 기준으로 필터링
+        val query: Query = ref.orderByChild("categoryId").equalTo(id)
+        // 한 번만 데이터를 가져오고 리스너 종료, 실시간 변경 감지 X
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) { // snapshot: Firebase에서 가져온 Items 데이터 목록
                 val lists = mutableListOf<ItemsModel>()
                 for (childSnapshot in snapshot.children) {
                     val list = childSnapshot.getValue(ItemsModel::class.java)  // 데이터를 ItemsModel 객체로 변환
